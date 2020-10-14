@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # vsftpd container entrypoint script
 
+chmod -R 777 /srv
+
 set -e
 
 [[ "${DEBUG}" == "true" ]] && set -x
@@ -9,11 +11,11 @@ set -e
 if [[ ! -z "${FTP_PASSWORD}" ]] && [[ -z "${FTP_PASSWORD_HASH}" ]]; then
   FTP_PASSWORD_HASH="$(echo "${FTP_PASSWORD}" | mkpasswd -s -m sha-512)"
 fi
-
+echo "${FTP_PASSWORD}";
 if [[ ! -z "${FTP_USER}" ]] || [[ ! -z "${FTP_PASSWORD_HASH}" ]]; then
   /add-virtual-user.sh -d "${FTP_USER}" "${FTP_PASSWORD_HASH}"
 fi
-
+echo "${FTP_USER}";
 # Support multiple users
 while read -r user; do
   IFS=: read -r name pass <<< "${!user}"
